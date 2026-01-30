@@ -78,7 +78,6 @@ const UploadPodcastEpisodeModal = () => {
             episode_number: newEpisodeNumber,
             title: '',
             episode_description: '',
-            is_private: false,
             episode: null,
         }
     })
@@ -88,7 +87,6 @@ const UploadPodcastEpisodeModal = () => {
             episode_number: newEpisodeNumber || '',
             title: '',
             episode_description: '',
-            is_private: false,
             episode: null,
         });
     }, [newEpisodeNumber])
@@ -116,20 +114,27 @@ const UploadPodcastEpisodeModal = () => {
             }
 
             const {
+                data: insertedEpisode,
                 error: supabaseError
             } = await supabaseClient
                 .from(`podcast_episodes`)
                 .insert({
                     user_id: user.id,
-                    title: values.title,
+                    name: values.title,
+                    episode_desctiption: values.episode_description,
                     author: values.author,
-                    is_private: values.is_private,
-                });
+                    podcast_id: PodcastId,
+                    episode_number: values.episode_number,
+                })
+                .select()
+                .single();
 
             if (supabaseError) {
                 setIsLoading(false);
                 return toast.error(supabaseError.message);
             }
+
+            const episodeId = insertedEpisode.id;
 
             const sanitizedFileName = sanitizeFileName(values.title);
 
@@ -148,13 +153,15 @@ const UploadPodcastEpisodeModal = () => {
 
                 console.log(`Uploading chunk ${chunkIndex + 1} of ${totalChunks} for episode ${values.title} (${values.episode_number}) with episode-${values.episode_number}-${sanitizedFileName}-${uniqueID}-chunk-${chunkIndex} Mime Type: ${mimeType} chunck: ${correctBlob}`);
 
+                const episode_file_name = `episode-${values.episode_number}-${sanitizedFileName}-${uniqueID}-chunk-${chunkIndex}`;
+
                 const {
                     data: episodeData,
                     error: episodeError
                 } = await supabaseClient
                     .storage
                     .from('podcast_episodes')
-                    .upload(`episode-${values.episode_number}-${sanitizedFileName}-${uniqueID}-chunk-${chunkIndex}`, correctBlob, {
+                    .upload(`${episode_file_name}`, correctBlob, {
                         cacheControl: '3600',
                         upsert: false,
                         contentType: mimeType
@@ -167,11 +174,25 @@ const UploadPodcastEpisodeModal = () => {
                     console.error(episodeError);
                     return toast.error("Failed to upload episode chunk");
                 }
+
+                const {
+                    error: supabaseChunkError
+                } = await supabaseClient
+                    .from(`podcast_episode_chunks`)
+                    .insert({
+                        episode_id: episodeId,
+                        chunk_path: episode_file_name,
+                    });
+
+                if (supabaseChunkError) {
+                    setIsLoading(false);
+                    return toast.error(supabaseChunkError.message);
+                }
             }
 
             router.refresh();
             setIsLoading(false);
-            toast.success("Song uploaded successfully");
+            toast.success("Episode uploaded successfully");
             reset();
             uploadPodcastEpisodeModal.onClose();
         } catch (error) {
@@ -207,12 +228,6 @@ const UploadPodcastEpisodeModal = () => {
                     disabled={isLoading}
                     {...register('episode_description', { required: true })}
                     placeholder="Episode Description"
-                />
-                <CheckBox
-                    id="is_private"
-                    label="Private Episode"
-                    disabled={isLoading}
-                    {...register('is_private')}
                 />
                 <div>
                     <div className="pb-1">

@@ -26,8 +26,6 @@ const PodcastPage = async ({ params }: Props) => {
     const tags = await getPodcastTags(podcastId);
     const episodes = await getPodcastEpisodes(podcastId);
 
-    console.log(podcast);
-
     return (
         <div
             className="
@@ -87,7 +85,7 @@ const PodcastPage = async ({ params }: Props) => {
                 </div>
                 <div className="my-16 flex flex-row items-center gap-x-4">
                     <FollowButton isFollowing={podcast.isFollowed} user_id={user?.id} podcast_id={podcastId} />
-                    <PodcastPopover podcastId={podcastId} podcast={podcast} isOwner={podcast.user_id === user?.id}/>
+                    <PodcastPopover podcastId={podcastId} podcast={podcast} isOwner={podcast.user_id === user?.id} />
                 </div>
                 {/* TODO: Add the ... */}
             </Header>
@@ -96,6 +94,11 @@ const PodcastPage = async ({ params }: Props) => {
                     <div className="w-full">
                         <p className="text-center">
                             Episodes Here
+                            {episodes.map((episode) => (
+                                <div key={episode.id}>
+                                    {JSON.stringify(episode)}
+                                </div>
+                            ))}
                         </p>
                     </div>
                 </div>
