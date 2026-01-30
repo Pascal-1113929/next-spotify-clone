@@ -9,6 +9,9 @@ import FollowButton from "./components/FollowButton";
 import getPodcastTags from "@/actions/getPodcastTags";
 import TagButton from "./components/TagButton";
 import PodcastPopover from "./components/PodcastPopover";
+import getPodcastEpisodeChunks from "@/actions/getPodcastEpisodeChunks";
+import PodcastEpisodeItem from "./components/PodcastEpisodeItem";
+import PodcastEpisodesContent from "./components/PodcastEpisodesContent";
 
 export const revalidate = 0;
 
@@ -25,6 +28,11 @@ const PodcastPage = async ({ params }: Props) => {
     const imagePath = await getImage(podcast.image_path);
     const tags = await getPodcastTags(podcastId);
     const episodes = await getPodcastEpisodes(podcastId);
+
+    for (const episode of episodes) {
+        const chunks = await getPodcastEpisodeChunks(episode.id);
+        (episode as any).chunks = chunks;
+    }
 
     return (
         <div
@@ -90,16 +98,13 @@ const PodcastPage = async ({ params }: Props) => {
                 {/* TODO: Add the ... */}
             </Header>
             <div className="flex flex-col-reverse lg:flex-row gap-4 p-4 w-full">
-                <div className="w-full lg:w-2/3 ">
+                <div className="w-full lg:w-2/3">
                     <div className="w-full">
-                        <p className="text-center">
-                            Episodes Here
-                            {episodes.map((episode) => (
-                                <div key={episode.id}>
-                                    {JSON.stringify(episode)}
-                                </div>
-                            ))}
-                        </p>
+                        <PodcastEpisodesContent
+                            podcastEpisodes={episodes}
+                            podcast={podcast}
+                            userId={user?.id}
+                        />
                     </div>
                 </div>
                 <div className="w-full lg:w-1/3">

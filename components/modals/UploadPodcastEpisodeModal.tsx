@@ -121,7 +121,7 @@ const UploadPodcastEpisodeModal = () => {
                 .insert({
                     user_id: user.id,
                     name: values.title,
-                    episode_desctiption: values.episode_description,
+                    episode_description: values.episode_description,
                     author: values.author,
                     podcast_id: PodcastId,
                     episode_number: values.episode_number,

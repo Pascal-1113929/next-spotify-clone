@@ -1,38 +1,41 @@
 "use client";
 
-import { Song } from "@/types";
-import useLoadImage from "@/hooks/useLoadImage";
-import usePlayer from "@/hooks/usePlayer";
+import { Podcast, PodcastEpisode } from "@/types";
 import Image from "next/image";
+import PlayButton from "@/components/PlayButton";
 import { twMerge } from "tailwind-merge";
+import usePlayer from "@/hooks/usePlayer";
 import * as ContextMenu from "@radix-ui/react-context-menu";
-import SongRightClickContent from "./right_click/SongRightClickContent";
-import useGetAlbumName from "@/hooks/useGetAlbumName";
+import useLoadPodcastImage from "@/hooks/useLoadPodcastImage";
 
-interface MediaItemProps {
-    data: Song;
-    onClick?: (id: string) => void;
+interface PodcastEpisodeItemProps {
+    data: PodcastEpisode;
+    podcast: Podcast;
     isplayer?: boolean;
+    onClick: (id: string) => void;
     isOwner: boolean;
-    hasAlbumName?: boolean;
 }
 
-const MediaItem: React.FC<MediaItemProps> = ({
+const PodcastEpisodeItem: React.FC<PodcastEpisodeItemProps> = ({
     data,
-    onClick,
+    podcast,
     isplayer,
+    onClick,
     isOwner,
-    hasAlbumName = false
 }) => {
     const player = usePlayer();
-    const imageUrl = useLoadImage(data);
+    const imageUrl = useLoadPodcastImage(podcast);
 
     const songId = data.id;
     const { activateId } = usePlayer();
 
     const playing = songId === activateId && !isplayer;
 
-    const { albumName } = useGetAlbumName(data.album_id);
+    const date_created = new Date(data.created_at).toLocaleDateString("nl-NL", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    })
 
     const handleClick = () => {
         if (onClick) {
@@ -74,8 +77,10 @@ rounded-md
                     />
                 </div>
                 <div className="flex flex-col gap-y-1 overflow-hidden">
-                    <p className={twMerge("text-white truncate", playing && "text-green-500")}>{data.title}</p>
-                    <p className="text-neutral-400 text-sm truncate">{data.author}</p>
+                    <p className={twMerge("text-white truncate", playing && "text-green-500")}>{data.episode_number} - {data.name}</p>
+                    <p className="text-neutral-400 text-sm truncate">{podcast.name}</p>
+                    <br />
+                    <p className="text-neutral-400 text-sm">{data.episode_description}</p>
                 </div>
             </div>
         )
@@ -83,28 +88,27 @@ rounded-md
 
     return (
         <ContextMenu.Root modal={false}>
-            <ContextMenu.Trigger>
+            <ContextMenu.Trigger asChild>
                 <div
                     onClick={handleClick}
                     className="
-        flex
-        items-center
-        gap-x-3
-        cursor-pointer
-        hover:bg-neutral-800/50
-        w-full
-        p-2
-        rounded-md
-        "
+                    flex
+                    items-center
+                    gap-x-3
+                    cursor-pointer
+                    hover:bg-neutral-800/50
+                    w-full
+                    p-2
+                    rounded-md
+                    "
                 >
                     <div
                         className="
-            relative
-            rounded-md
-            min-h-[48px]
-            min-w-[48px]
-
-            "
+                        relative
+                        rounded-md
+                        min-h-[140px]
+                        min-w-[140px]
+                        "
                     >
                         <Image
                             fill
@@ -114,15 +118,16 @@ rounded-md
                         />
                     </div>
                     <div className="flex flex-col gap-y-1 overflow-hidden">
-                        <p className={twMerge("text-white truncate", playing && "text-green-500")}>{data.title}</p>
-                        <p className="text-neutral-400 text-sm truncate">{data.author}</p>
-                        {hasAlbumName && albumName && <p className="text-neutral-400 text-sm truncate">{albumName}</p>}
+                        <h3 className={twMerge("text-white truncate sm:text-md lg:text-xl", playing && "text-green-500")}>{data.episode_number} - {data.name}</h3>
+                        <p className="text-neutral-400 text-sm truncate">{podcast.name}</p>
+                        <p className="text-neutral-400 text-sm mt-2 line-clamp-2">{data.episode_description}</p>
+                        <p className=" text-sm mt-2">{date_created}</p>
                     </div>
                 </div>
             </ContextMenu.Trigger>
-            <SongRightClickContent isOwner={isOwner} song={data} />
+            {/* <SongRightClickContent isOwner={isOwner} song={data} /> */}
         </ContextMenu.Root>
     );
 }
 
-export default MediaItem;
+export default PodcastEpisodeItem;

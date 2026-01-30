@@ -104,11 +104,19 @@ export interface PodcastEpisode {
     user_id: string;
     episode_number: string;
     name: string;
+    created_at: string;
     episode_description: string;
     episode_path: string;
     podcast_id: string;
+    chunks: PodcastEpisodeChunk[];
 }
 
 export interface ProductWithPrice extends Product {
     prices?: Price[];
+}
+
+export interface PodcastEpisodeChunk {
+    id: string;
+    episode_id: string;
+    chunk_path: string;
 }
