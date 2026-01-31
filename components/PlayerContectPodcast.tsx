@@ -1,6 +1,6 @@
 "use client"
 
-import { PodcastEpisode } from "@/types";
+import { PodcastEpisode, PodcastEpisodeWithChunks } from "@/types";
 import MediaItem from "./MediaItem";
 import LikeButton from "./LikeButton";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
@@ -14,10 +14,13 @@ import toast from "react-hot-toast";
 import { getAudioDuration, getAudioDurationInSecconds } from "@/lib/getDuration";
 import PlayerSlider from "./PlayerSlider";
 import PlaylistButton from "./PlaylistButton";
+import MediaEpisodeItem from "./MediaEpisodeItem";
+import Player from "./Player";
+import { getPodcastAudioDuration, getPodcastAudioDurationInSeconds } from "@/lib/getPodcastDuration";
 
 interface PlayerContentPodcastProps {
-    podcastEpisode: PodcastEpisode;
-    podcastEpisodeUrl: string;
+    podcastEpisode: PodcastEpisodeWithChunks;
+    podcastEpisodeUrl: string[];
 }
 
 const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
@@ -138,14 +141,14 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
     }, [sound]);
 
     useEffect(() => {
-        getAudioDuration(podcastEpisodeUrl, (formattedDuration, error) => {
+        getPodcastAudioDuration(podcastEpisodeUrl, (formattedDuration, error) => {
             if (error) {
                 toast.error(error);
             } else {
                 setDuration(formattedDuration);
             }
         });
-        getAudioDurationInSecconds(podcastEpisodeUrl, (durationInSeconds, error) => {
+        getPodcastAudioDurationInSeconds(podcastEpisodeUrl, (durationInSeconds, error) => {
             if (error) {
                 toast.error(error);
             } else {
@@ -173,7 +176,7 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
             >
                 <div className="flex w-full justify-start">
                     <div className="flex items-center gap-x-4 md:mb-4">
-                        <MediaItem data={podcastEpisode} isplayer isOwner={false}/>
+                        <MediaEpisodeItem data={podcastEpisode} isplayer isOwner={false}/>
                         {/* <LikeButton podcastId={podcastEpisode.id} />
                         <PlaylistButton podcastId={podcastEpisode.id}/> */}
                     </div>
@@ -258,4 +261,4 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
     );
 }
 
-export default PlayerContent;
+export default PlayerContentPodcast;

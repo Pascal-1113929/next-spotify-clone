@@ -120,3 +120,7 @@ export interface PodcastEpisodeChunk {
     episode_id: string;
     chunk_path: string;
 }
+
+export interface PodcastEpisodeWithChunks extends PodcastEpisode {
+    chunks: PodcastEpisodeChunk[];
+}
