@@ -42,7 +42,7 @@ const CreatePodcastModal = () => {
                 return toast.error(error.message);
             }
 
-            console.log(tagsData);
+            // console.log(tagsData);
 
             setTags(tagsData);
         }

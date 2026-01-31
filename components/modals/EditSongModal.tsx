@@ -104,14 +104,14 @@ const SongEditModal = () => {
                     .select('id, name')
                     .eq('user_id', user.id);
 
-                console.log("Albums: " + data);
+                // console.log("Albums: " + data);
 
                 if (error) {
                     console.error("Error in albums" + error);
                     return;
                 }
 
-                console.log(data);
+                // console.log(data);
 
                 setAlbumData([{ id: 'no-album', name: 'No Album' }, ...data]);
             } catch (error) {

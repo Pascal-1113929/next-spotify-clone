@@ -42,7 +42,7 @@ const PodcastEpisodeItem: React.FC<PodcastEpisodeItemProps> = ({
             onClick(data.id);
         }
 
-        return player.setId(data.id);
+        return player.setId(data.id, "podcast");
     }
 
     if (isplayer) {
