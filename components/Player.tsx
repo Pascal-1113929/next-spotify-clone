@@ -4,6 +4,7 @@ import useGetSongById from "@/hooks/useGetSongById";
 import useLoadSong from "@/hooks/useLoadSongUrl";
 import usePlayer from "@/hooks/usePlayer";
 import PlayerContent from "./PlayerContect";
+import PlayerContentPodcast from "./PlayerContectPodcast";
 
 const Player = () => {
     const player = usePlayer();
@@ -28,11 +29,20 @@ const Player = () => {
         px-4
         "
         >
-            <PlayerContent
-                key={songUrl}
-                song={song}
-                songUrl={songUrl}
-            />
+            {player.type === "song" && (
+                <PlayerContent
+                    key={songUrl}
+                    song={song}
+                    songUrl={songUrl}
+                />
+            )} 
+            {player.type === "podcast" && (
+                <PlayerContentPodcast
+                    key={songUrl}
+                    podcastEpisode={song}
+                    podcastEpisodeUrl={songUrl}
+                />
+            )}
         </div>
     );
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { Song } from "@/types";
+import { PodcastEpisode } from "@/types";
 import MediaItem from "./MediaItem";
 import LikeButton from "./LikeButton";
 import { BsPauseFill, BsPlayFill } from "react-icons/bs";
@@ -15,14 +15,14 @@ import { getAudioDuration, getAudioDurationInSecconds } from "@/lib/getDuration"
 import PlayerSlider from "./PlayerSlider";
 import PlaylistButton from "./PlaylistButton";
 
-interface PlayerContentProps {
-    song: Song;
-    songUrl: string;
+interface PlayerContentPodcastProps {
+    podcastEpisode: PodcastEpisode;
+    podcastEpisodeUrl: string;
 }
 
-const PlayerContent: React.FC<PlayerContentProps> = ({
-    song,
-    songUrl
+const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
+    podcastEpisode,
+    podcastEpisodeUrl
 }) => {
     const player = usePlayer();
     const [volume, setVolume] = useState<number>(() => {
@@ -53,19 +53,19 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
         if (player.shuffle)
         {
             const randomIndex = Math.floor(Math.random() * player.ids.length);
-            const randomSong = player.ids[randomIndex];
-            return player.setId(randomSong, "song");
+            const randomPodcastEpisode = player.ids[randomIndex];
+            return player.setId(randomPodcastEpisode, "podcast");
         }
         
         const currentIndex = player.ids.findIndex((id) => id === player.activateId);
 
-        const nextSong = player.ids[currentIndex + 1];
+        const nextPodcastEpisode = player.ids[currentIndex + 1];
 
-        if (!nextSong) {
-            return player.setId(player.ids[0], "song");
+        if (!nextPodcastEpisode) {
+            return player.setId(player.ids[0], "podcast");
         }
 
-        player.setId(nextSong, "song");
+        player.setId(nextPodcastEpisode, "podcast");
     }
 
     const onPlayPrevious = () => {
@@ -75,17 +75,17 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
 
         const currentIndex = player.ids.findIndex((id) => id === player.activateId);
 
-        const previousSong = player.ids[currentIndex - 1];
+        const previousPodcastEpisode = player.ids[currentIndex - 1];
 
-        if (!previousSong) {
-            return player.setId(player.ids[player.ids.length - 1], "song");
+        if (!previousPodcastEpisode) {
+            return player.setId(player.ids[player.ids.length - 1], "podcast");
         }
 
-        player.setId(previousSong, "song");
+        player.setId(previousPodcastEpisode, "podcast");
     }
 
     const [play, { pause, sound }] = useSound(
-        songUrl,
+        podcastEpisodeUrl,
         {
             volume,
             onplay: () => setIsPlaying(true),
@@ -138,21 +138,21 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
     }, [sound]);
 
     useEffect(() => {
-        getAudioDuration(songUrl, (formattedDuration, error) => {
+        getAudioDuration(podcastEpisodeUrl, (formattedDuration, error) => {
             if (error) {
                 toast.error(error);
             } else {
                 setDuration(formattedDuration);
             }
         });
-        getAudioDurationInSecconds(songUrl, (durationInSeconds, error) => {
+        getAudioDurationInSecconds(podcastEpisodeUrl, (durationInSeconds, error) => {
             if (error) {
                 toast.error(error);
             } else {
                 setDurationInSeconds(durationInSeconds);
             }
         });
-    }, [songUrl]);
+    }, [podcastEpisodeUrl]);
 
     useEffect(() => {
         localStorage.setItem('volume', volume.toString());
@@ -173,9 +173,9 @@ const PlayerContent: React.FC<PlayerContentProps> = ({
             >
                 <div className="flex w-full justify-start">
                     <div className="flex items-center gap-x-4 md:mb-4">
-                        <MediaItem data={song} isplayer isOwner={false}/>
-                        <LikeButton songId={song.id} />
-                        <PlaylistButton songId={song.id}/>
+                        <MediaItem data={podcastEpisode} isplayer isOwner={false}/>
+                        {/* <LikeButton podcastId={podcastEpisode.id} />
+                        <PlaylistButton podcastId={podcastEpisode.id}/> */}
                     </div>
                 </div>
                 <div className="flex md:hidden coll-auto w-full justify-end items-center">

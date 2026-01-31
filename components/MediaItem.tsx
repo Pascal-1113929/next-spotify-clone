@@ -39,7 +39,7 @@ const MediaItem: React.FC<MediaItemProps> = ({
             onClick(data.id);
         }
 
-        return player.setId(data.id);
+        return player.setId(data.id, "song");
     }
 
     if (isplayer) {
