@@ -49,42 +49,42 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
     };
 
     const onPlayNext = () => {
-        if (player.ids.length === 0) {
-            return;
-        }
+        // if (player.ids.length === 0) {
+        //     return;
+        // }
 
-        if (player.shuffle)
-        {
-            const randomIndex = Math.floor(Math.random() * player.ids.length);
-            const randomPodcastEpisode = player.ids[randomIndex];
-            return player.setId(randomPodcastEpisode, "podcast");
-        }
+        // if (player.shuffle)
+        // {
+        //     const randomIndex = Math.floor(Math.random() * player.ids.length);
+        //     const randomPodcastEpisode = player.ids[randomIndex];
+        //     return player.setId(randomPodcastEpisode, "podcast");
+        // }
         
-        const currentIndex = player.ids.findIndex((id) => id === player.activateId);
+        // const currentIndex = player.ids.findIndex((id) => id === player.activateId);
 
-        const nextPodcastEpisode = player.ids[currentIndex + 1];
+        // const nextPodcastEpisode = player.ids[currentIndex + 1];
 
-        if (!nextPodcastEpisode) {
-            return player.setId(player.ids[0], "podcast");
-        }
+        // if (!nextPodcastEpisode) {
+        //     return player.setId(player.ids[0], "podcast");
+        // }
 
-        player.setId(nextPodcastEpisode, "podcast");
+        // player.setId(nextPodcastEpisode, "podcast");
     }
 
     const onPlayPrevious = () => {
-        if (player.ids.length === 0) {
-            return;
-        }
+        // if (player.ids.length === 0) {
+        //     return;
+        // }
 
-        const currentIndex = player.ids.findIndex((id) => id === player.activateId);
+        // const currentIndex = player.ids.findIndex((id) => id === player.activateId);
 
-        const previousPodcastEpisode = player.ids[currentIndex - 1];
+        // const previousPodcastEpisode = player.ids[currentIndex - 1];
 
-        if (!previousPodcastEpisode) {
-            return player.setId(player.ids[player.ids.length - 1], "podcast");
-        }
+        // if (!previousPodcastEpisode) {
+        //     return player.setId(player.ids[player.ids.length - 1], "podcast");
+        // }
 
-        player.setId(previousPodcastEpisode, "podcast");
+        // player.setId(previousPodcastEpisode, "podcast");
     }
 
     const [play, { pause, sound }] = useSound(
