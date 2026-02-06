@@ -38,6 +38,8 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
     const [durationInSeconds, setDurationInSeconds] = useState<number | null>(null);
     const [currentTime, setCurrentTime] = useState<string | null>(null);
     const [currentTimeInSeconds, setCurrentTimeInSeconds] = useState<number | null>(null);
+    const [currentUrlIndex, setCurrentUrlIndex] = useState(0);
+    const [accumulatedDuration, setAccumulatedDuration] = useState(0);
 
     const Icon = isPlaying ? BsPauseFill : BsPlayFill;
     const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
@@ -86,10 +88,6 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
 
         // player.setId(previousPodcastEpisode, "podcast");
     }
-
-    const [currentUrlIndex, setCurrentUrlIndex] = useState(0); // Track the current URL index
-
-    const [accumulatedDuration, setAccumulatedDuration] = useState(0); // Track total duration of previous chunks
 
     const [play, { pause, sound }] = useSound(
         podcastEpisodeUrl[currentUrlIndex], // Use the current URL
