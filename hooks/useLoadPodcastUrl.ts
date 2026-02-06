@@ -11,7 +11,7 @@ const useLoadPodcastUrl = (chunkPaths: string[]) => {
     const chunkUrls = chunkPaths.map((chunkPath) => {
         const { data: chunkData } = supabaseClient
             .storage
-            .from('podcasts')
+            .from('podcast_episodes')
             .getPublicUrl(chunkPath);
 
         return chunkData?.publicUrl || '';

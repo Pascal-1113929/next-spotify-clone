@@ -59,7 +59,7 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
         //     const randomPodcastEpisode = player.ids[randomIndex];
         //     return player.setId(randomPodcastEpisode, "podcast");
         // }
-        
+
         // const currentIndex = player.ids.findIndex((id) => id === player.activateId);
 
         // const nextPodcastEpisode = player.ids[currentIndex + 1];
@@ -87,19 +87,35 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
         // player.setId(previousPodcastEpisode, "podcast");
     }
 
+    const [currentUrlIndex, setCurrentUrlIndex] = useState(0); // Track the current URL index
+
+    const [accumulatedDuration, setAccumulatedDuration] = useState(0); // Track total duration of previous chunks
+
     const [play, { pause, sound }] = useSound(
-        podcastEpisodeUrl,
+        podcastEpisodeUrl[currentUrlIndex], // Use the current URL
         {
             volume,
             onplay: () => setIsPlaying(true),
             onend: () => {
                 setIsPlaying(false);
-                onPlayNext();
+                onPartPlayNext(); // Automatically play the next URL when the current one ends
             },
             onpause: () => setIsPlaying(false),
             format: ["mp3"]
         }
     );
+
+    const onPartPlayNext = () => {
+        if (currentUrlIndex < podcastEpisodeUrl.length - 1) {
+            if (sound) {
+                const currentChunkDuration = sound.duration();
+                setAccumulatedDuration((prev) => prev + currentChunkDuration);
+            }
+            setCurrentUrlIndex((prevIndex) => prevIndex + 1);
+        } else {
+            setIsPlaying(false);
+        }
+    };
 
     useEffect(() => {
         sound?.play();
@@ -107,7 +123,7 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
         return () => {
             sound?.unload();
         }
-    }, [sound])
+    }, [sound,])
 
     const handlePlay = () => {
         if (!isPlaying) {
@@ -128,17 +144,18 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
     useEffect(() => {
         if (sound) {
             const interval = setInterval(() => {
-                const currentTime = sound.seek();
-                const minutes = Math.floor(currentTime / 60);
-                const seconds = Math.floor(currentTime % 60);
+                const currentTime = sound.seek(); // Time in current chunk
+                const totalTime = accumulatedDuration + currentTime; // Add previous chunks' duration
+                const minutes = Math.floor(totalTime / 60);
+                const seconds = Math.floor(totalTime % 60);
                 const formattedCurrentTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
                 setCurrentTime(formattedCurrentTime);
-                setCurrentTimeInSeconds(currentTime);
+                setCurrentTimeInSeconds(totalTime); // Use total time instead of just current chunk time
             }, 1000);
 
             return () => clearInterval(interval);
         }
-    }, [sound]);
+    }, [sound, accumulatedDuration]); // Add accumulatedDuration to dependencies
 
     useEffect(() => {
         getPodcastAudioDuration(podcastEpisodeUrl, (formattedDuration, error) => {
@@ -161,6 +178,11 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
         localStorage.setItem('volume', volume.toString());
     }, [volume]);
 
+    useEffect(() => {
+        setAccumulatedDuration(0);
+        setCurrentUrlIndex(0);
+    }, [podcastEpisode.id]); // Reset when episode changes
+
     return (
         <div className="h-full">
 
@@ -176,7 +198,7 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
             >
                 <div className="flex w-full justify-start">
                     <div className="flex items-center gap-x-4 md:mb-4">
-                        <MediaEpisodeItem data={podcastEpisode} isplayer isOwner={false}/>
+                        <MediaEpisodeItem data={podcastEpisode} isplayer isOwner={false} />
                         {/* <LikeButton podcastId={podcastEpisode.id} />
                         <PlaylistButton podcastId={podcastEpisode.id}/> */}
                     </div>
@@ -230,10 +252,11 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
                             <Icon size={30} className="text-black" />
                         </div>
                         <AiFillStepForward size={30} className="text-neutral-400 cursor-pointer hover:text-white transition" onClick={onPlayNext} />
+                        <button onClick={onPartPlayNext}>skip chunk</button>
                     </div>
                     <div className="flex flex-row">
                         <p className="mt-2 text-center">{currentTime}</p>
-                        <PlayerSlider duration={durationInSeconds} currentTime={currentTimeInSeconds} onSeek={handleSeek}/>
+                        <PlayerSlider duration={durationInSeconds} currentTime={currentTimeInSeconds} onSeek={handleSeek} />
                         <p className="mt-2 text-center">{duration}</p>
                     </div>
                 </div>
@@ -255,7 +278,7 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
                 </div>
             </div>
             <div className="block md:hidden w-full fixed bottom-0">
-                <PlayerSlider duration={durationInSeconds} currentTime={currentTimeInSeconds} onSeek={handleSeek}/>
+                <PlayerSlider duration={durationInSeconds} currentTime={currentTimeInSeconds} onSeek={handleSeek} />
             </div>
         </div>
     );
