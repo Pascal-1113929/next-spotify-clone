@@ -181,6 +181,10 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
         setCurrentUrlIndex(0);
     }, [podcastEpisode.id]); // Reset when episode changes
 
+    useEffect(() => {
+        console.log("Accumulated Duration:", accumulatedDuration);
+    }, [accumulatedDuration]);
+
     return (
         <div className="h-full">
 
