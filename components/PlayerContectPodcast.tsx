@@ -40,14 +40,28 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
     const [currentTimeInSeconds, setCurrentTimeInSeconds] = useState<number | null>(null);
     const [currentUrlIndex, setCurrentUrlIndex] = useState(0);
     const [accumulatedDuration, setAccumulatedDuration] = useState(0);
+    const [pendingSeek, setPendingSeek] = useState<number>(0);
 
     const Icon = isPlaying ? BsPauseFill : BsPlayFill;
     const VolumeIcon = volume === 0 ? HiSpeakerXMark : HiSpeakerWave;
 
     const handleSeek = (value: number) => {
-        if (sound) {
-            sound.seek(value);
-        }
+        // setPendingSeek(value);
+
+        // if (pendingSeek < accumulatedDuration) {
+        //     onPartPlayPrev();
+        //     handleSeek(value); // Call handleSeek again to check if we need to go back more chunks
+        // }
+        // else if (pendingSeek >= accumulatedDuration + (sound ? sound.duration() : 0)) {
+        //     onPartPlayNext();
+        //     handleSeek(value); // Call handleSeek again to check if we need to go forward more chunks
+        // }
+        // else {
+        //     if (sound) {
+        //         sound.seek(value);
+        //     }
+        // }
+        console.log("Seeking to:", value);
     };
 
     const onPlayNext = () => {
@@ -112,6 +126,19 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
             setCurrentUrlIndex((prevIndex) => prevIndex + 1);
         } else {
             setIsPlaying(false);
+        }
+    };
+
+    const onPartPlayPrev = () => {
+        if (currentUrlIndex > 0) {
+            setCurrentUrlIndex((prevIndex) => prevIndex - 1);
+            setAccumulatedDuration((prev) => {
+                if (sound) {
+                    const currentChunkDuration = sound.duration();
+                    return Math.max(0, prev - currentChunkDuration);
+                }
+                return prev;
+            });
         }
     };
 
@@ -180,10 +207,6 @@ const PlayerContentPodcast: React.FC<PlayerContentPodcastProps> = ({
         setAccumulatedDuration(0);
         setCurrentUrlIndex(0);
     }, [podcastEpisode.id]); // Reset when episode changes
-
-    useEffect(() => {
-        console.log("Accumulated Duration:", accumulatedDuration);
-    }, [accumulatedDuration]);
 
     return (
         <div className="h-full">
