@@ -1,4 +1,10 @@
 1. code
+2. table podcasts
+3. table podcasts_episodes
+4. bucket podcast_episodes mime: audio/mpeg
+5. table podcast_progress
+6. table podcast_follows
+7. setup the policies
 
 packages:
 

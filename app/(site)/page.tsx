@@ -9,6 +9,10 @@ import getPublicPlaylists from "@/actions/getPublicPlaylists";
 import getUser from "@/actions/getUser";
 import AlbumContent from "./components/AlbumContent";
 import getAlbums from "@/actions/getAlbums";
+import PodcastContent from "./components/PodcastContent";
+import getPodcasts from "@/actions/getPodcasts";
+import getFollowingPlaylists from "@/actions/getFollowingPodcasts";
+import getMyPodcasts from "@/actions/getMyPodcasts";
 
 export const revalidate = 0;
 
@@ -18,6 +22,9 @@ export default async function Home() {
   const publicPlaylists = await getPublicPlaylists();
   const user = await getUser();
   const albums = await getAlbums();
+  const MyPodcasts = await getMyPodcasts();
+  const FollowPodcasts = await getFollowingPlaylists();
+  const Podcasts = await getPodcasts();
 
   const userId = user?.id;
 
@@ -121,6 +128,57 @@ export default async function Home() {
         </div>
         <div>
           <AlbumContent albums={albums} userId={userId} />
+        </div>
+      </div>
+      <div className="mt-2 mb-7 px-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-white text-2xl font-semibold mb-2">
+            My Podcasts
+          </h1>
+          <Link href="/podcasts/list/all">
+            <p className="text-white text-sm font-semibold mr-3 hover:underline">
+              View All
+            </p>
+          </Link>
+        </div>
+        <div>
+          {/* <PageContent songs={songs} /> */}
+          <PodcastContent podcasts={MyPodcasts} userId={userId} />
+          {/* <p className="text-red-500">This is in development</p> */}
+        </div>
+      </div>
+      <div className="mt-2 mb-7 px-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-white text-2xl font-semibold mb-2">
+            Following Podcasts
+          </h1>
+          <Link href="/podcasts/list/following">
+            <p className="text-white text-sm font-semibold mr-3 hover:underline">
+              View All
+            </p>
+          </Link>
+        </div>
+        <div>
+          {/* <PageContent songs={songs} /> */}
+          <PodcastContent podcasts={FollowPodcasts} userId={userId} />
+          {/* <p className="text-red-500">This is in development</p> */}
+        </div>
+      </div>
+      <div className="mt-2 mb-7 px-6">
+        <div className="flex justify-between items-center">
+          <h1 className="text-white text-2xl font-semibold mb-2">
+            Podcasts
+          </h1>
+          <Link href="/podcasts/list/all">
+            <p className="text-white text-sm font-semibold mr-3 hover:underline">
+              View All
+            </p>
+          </Link>
+        </div>
+        <div>
+          {/* <PageContent songs={songs} /> */}
+          <PodcastContent podcasts={Podcasts} userId={userId} />
+          {/* <p className="text-red-500">This is in development</p> */}
         </div>
       </div>
     </div>

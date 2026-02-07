@@ -1,6 +1,6 @@
 "use client";
 
-import { Song } from "@/types";
+import { PodcastEpisode, Song } from "@/types";
 import useLoadImage from "@/hooks/useLoadImage";
 import usePlayer from "@/hooks/usePlayer";
 import Image from "next/image";
@@ -9,15 +9,15 @@ import * as ContextMenu from "@radix-ui/react-context-menu";
 import SongRightClickContent from "./right_click/SongRightClickContent";
 import useGetAlbumName from "@/hooks/useGetAlbumName";
 
-interface MediaItemProps {
-    data: Song;
+interface MediaEpisodeItemProps {
+    data: PodcastEpisode;
     onClick?: (id: string) => void;
     isplayer?: boolean;
     isOwner: boolean;
     hasAlbumName?: boolean;
 }
 
-const MediaItem: React.FC<MediaItemProps> = ({
+const MediaEpisodeItem: React.FC<MediaEpisodeItemProps> = ({
     data,
     onClick,
     isplayer,
@@ -25,21 +25,19 @@ const MediaItem: React.FC<MediaItemProps> = ({
     hasAlbumName = false
 }) => {
     const player = usePlayer();
-    const imageUrl = useLoadImage(data);
+    // const imageUrl = useLoadImage(data);
 
-    const songId = data.id;
+    const episodeId = data.id;
     const { activateId } = usePlayer();
 
-    const playing = songId === activateId && !isplayer;
-
-    const { albumName } = useGetAlbumName(data.album_id);
+    const playing = episodeId === activateId && !isplayer;
 
     const handleClick = () => {
         if (onClick) {
             onClick(data.id);
         }
 
-        return player.setId(data.id, "song");
+        return player.setId(data.id, "podcast");
     }
 
     if (isplayer) {
@@ -66,16 +64,16 @@ rounded-md
 
     "
                 >
-                    <Image
+                    {/* <Image
                         fill
                         src={imageUrl || "/images/liked.png"}
                         alt="mediaItem"
                         className="object-cover"
-                    />
+                    /> */}
                 </div>
                 <div className="flex flex-col gap-y-1 overflow-hidden">
-                    <p className={twMerge("text-white truncate", playing && "text-green-500")}>{data.title}</p>
-                    <p className="text-neutral-400 text-sm truncate">{data.author}</p>
+                    {/* <p className={twMerge("text-white truncate", playing && "text-green-500")}>{data.title}</p> */}
+                    {/* <p className="text-neutral-400 text-sm truncate">{data.author}</p> */}
                 </div>
             </div>
         )
@@ -106,23 +104,22 @@ rounded-md
 
             "
                     >
-                        <Image
+                        {/* <Image
                             fill
                             src={imageUrl || "/images/liked.png"}
                             alt="mediaItem"
                             className="object-cover"
-                        />
+                        /> */}
                     </div>
                     <div className="flex flex-col gap-y-1 overflow-hidden">
-                        <p className={twMerge("text-white truncate", playing && "text-green-500")}>{data.title}</p>
-                        <p className="text-neutral-400 text-sm truncate">{data.author}</p>
-                        {hasAlbumName && albumName && <p className="text-neutral-400 text-sm truncate">{albumName}</p>}
+                        {/* <p className={twMerge("text-white truncate", playing && "text-green-500")}>{data.title}</p> */}
+                        {/* <p className="text-neutral-400 text-sm truncate">{data.author}</p> */}
                     </div>
                 </div>
             </ContextMenu.Trigger>
-            <SongRightClickContent isOwner={isOwner} song={data} />
+            {/* <SongRightClickContent isOwner={isOwner} song={data} /> */}
         </ContextMenu.Root>
     );
 }
 
-export default MediaItem;
+export default MediaEpisodeItem;

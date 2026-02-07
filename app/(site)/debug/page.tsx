@@ -5,7 +5,7 @@ import getData from "@/actions/getData";
 
 const DebugPage = async () => {
     console.log("DebugPage component is rendering");
-    const data = await getData('playlists');
+    const data = await getData('podcast_tags');
     // const data = await getAlbumSongs('1');
     // console.log("Fetched data:", data);
 
